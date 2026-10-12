@@ -7,7 +7,7 @@ const CONFIG = {
   // Masukkan URL Google Apps Script Web App yang telah dideploy di sini.
   // Contoh: "https://script.google.com/macros/s/AKfycbyPI1IrwPEjQXL6SVo6zSrJdWhiRTI0eryTQtcRI8EQUcwY0tGt91GlP_RzSN7ajlj6/exec"
   // Biarkan kosong jika Web App belum dideploy; sistem akan memaklumkan status kepada murid dengan mesra.
-  GOOGLE_APPS_SCRIPT_URL: "",
+  GOOGLE_APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyPI1IrwPEjQXL6SVo6zSrJdWhiRTI0eryTQtcRI8EQUcwY0tGt91GlP_RzSN7ajlj6/exec",
 
   // Parameter Permainan
   TOTAL_QUESTIONS: 20,
