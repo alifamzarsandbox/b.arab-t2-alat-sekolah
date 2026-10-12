@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MISI BAHASA ARAB — Dunia Alat Sekolah</title>
+  <meta name="description" content="Permainan Kuiz Pendidikan Bahasa Arab Interaktif Tahun 2 Sekolah Rendah: Dunia Alat Sekolah">
+  
+  <!-- Google Fonts: Nunito (BM) & Amiri + Noto Naskh Arabic (Bahasa Arab) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Naskh+Arabic:wght@400;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas Confetti untuk Meraikan Kejayaan -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-container">
+    <!-- ========================================================
+         HEADER UTAMA
+         ======================================================== -->
+    <header class="app-header">
+      <div class="header-logo">
+        <span class="logo-icon">🎒</span>
+        <div class="logo-text">
+          <h1 class="game-title">MISI BAHASA ARAB</h1>
+          <span class="game-subtitle">Dunia Alat Sekolah (Tahun 2)</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-toggle-sound" class="btn-icon" aria-label="Suis Bunyi" title="Hidup/Mati Bunyi">
+          <span id="sound-icon">🔊</span>
+        </button>
+        <button id="btn-header-leaderboard" class="btn-icon btn-leaderboard-pill" aria-label="Lihat Leaderboard" title="Papan Juara">
+          <span>🏆</span>
+          <span class="btn-text-desktop">Leaderboard</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ========================================================
+         SKRIN 1: LAMAN UTAMA & PENDAFTARAN NAMA
+         ======================================================== -->
+    <main id="screen-welcome" class="screen active">
+      <div class="card welcome-card">
+        <div class="welcome-badge">⭐ EDISI TAHUN 2 SEKOLAH RENDAH ⭐</div>
+        
+        <div class="hero-graphic" id="hero-graphic-container">
+          <!-- Disuntik melalui ASSETS.heroMascot -->
+        </div>
+
+        <h2 class="welcome-heading">Selamat Datang, Penjelajah Cilik!</h2>
+        <p class="welcome-desc">
+          Sertai misi pembelajaran <strong>Dunia Alat Sekolah</strong>! Jawab 20 soalan menarik, kumpul markah sehingga 100, dan catatkan namamu di Papan Juara!
+        </p>
+
+        <!-- Borang Nama Murid & Pilihan Kelas -->
+        <div class="name-form-container">
+          <!-- Pilihan Kelas -->
+          <div class="class-selection-group">
+            <label class="form-label">Pilih Kelas Kamu:</label>
+            <div class="class-selector-group" role="radiogroup" aria-label="Pilih Kelas">
+              <button type="button" class="btn-class-card active" data-class="2 Elite" role="radio" aria-checked="true">
+                <span class="class-card-icon">🌟</span>
+                <span class="class-card-label">2 Elite</span>
+              </button>
+              <button type="button" class="btn-class-card" data-class="2 Unggul" role="radio" aria-checked="false">
+                <span class="class-card-icon">🏫</span>
+                <span class="class-card-label">2 Unggul</span>
+              </button>
+            </div>
+            <input type="hidden" id="student-class-input" value="2 Elite">
+          </div>
+
+          <!-- Input Nama -->
+          <label for="student-name-input" class="form-label" style="margin-top: 14px;">Tulis Nama Kamu Dahulu:</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✏️</span>
+            <input 
+              type="text" 
+              id="student-name-input" 
+              class="text-input" 
+              placeholder="Contoh: Aiman / Nurul" 
+              maxlength="30"
+              autocomplete="name"
+              autofocus
+            >
+          </div>
+          <div id="name-error-msg" class="error-msg" role="alert" style="display: none;">
+            ⚠️ Tulis nama kamu dahulu sebelum memulakan misi!
+          </div>
+        </div>
+
+        <!-- Butang Tindakan Utama -->
+        <div class="welcome-buttons">
+          <button id="btn-start-game" class="btn btn-primary btn-large btn-glow">
+            🚀 MULA MISI
+          </button>
+          <button id="btn-view-leaderboard-welcome" class="btn btn-secondary">
+            🏆 LIHAT LEADERBOARD
+          </button>
+        </div>
+
+        <!-- Info Ringkas Misi -->
+        <div class="mission-info-pills">
+          <div class="info-pill">
+            <span class="pill-icon">🎯</span>
+            <span>20 Soalan</span>
+          </div>
+          <div class="info-pill">
+            <span class="pill-icon">⭐</span>
+            <span>100 Markah</span>
+          </div>
+          <div class="info-pill">
+            <span class="pill-icon">📚</span>
+            <span>8 Kosa Kata Rasmi</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================================
+         SKRIN 2: PERMAINAN (20 SOALAN)
+         ======================================================== -->
+    <main id="screen-game" class="screen">
+      <!-- Top Gameplay Bar -->
+      <div class="game-top-bar">
+        <div class="player-pill">
+          <span class="pill-avatar">🧒</span>
+          <span id="game-student-name" class="player-name">Murid</span>
+          <span id="game-student-class" class="player-class-chip">2 Elite</span>
+        </div>
+        
+        <div class="question-tracker">
+          <span class="tracker-label">Soalan</span>
+          <span class="tracker-numbers">
+            <strong id="current-q-num">1</strong> / 20
+          </span>
+        </div>
+
+        <div class="score-pill">
+          <span class="score-star">⭐</span>
+          <span id="current-score-val">0</span>
+          <span class="score-max">/ 100</span>
+        </div>
+      </div>
+
+      <!-- Progress Bar Perjalanan Misi -->
+      <div class="mission-progress-container" aria-label="Kemajuan Soalan">
+        <div class="mission-progress-track">
+          <div id="mission-progress-fill" class="mission-progress-fill" style="width: 5%;"></div>
+        </div>
+      </div>
+
+      <!-- Kad Soalan Utama -->
+      <div class="card question-card">
+        <!-- Header Format Soalan -->
+        <div class="question-format-bar">
+          <span id="question-format-badge" class="format-badge">FORMAT A</span>
+          <span id="question-points-badge" class="points-badge">+5 Markah</span>
+        </div>
+
+        <!-- Arahan Soalan -->
+        <h2 id="question-instruction" class="question-instruction">
+          Pilih perkataan Arab yang betul.
+        </h2>
+
+        <!-- Area Kandungan Dinamik (Bergantung kepada Format A, B, C, D) -->
+        <div id="question-interactive-area" class="interactive-area">
+          <!-- Format A, B, C, D akan dimuatkan oleh script.js -->
+        </div>
+
+        <!-- Panel Maklum Balas Segera (Muncul selepas murid menjawab) -->
+        <div id="feedback-panel" class="feedback-panel" style="display: none;">
+          <div class="feedback-content">
+            <div id="feedback-icon" class="feedback-icon">🌟</div>
+            <div class="feedback-text-wrap">
+              <h3 id="feedback-title" class="feedback-title">Hebat! Jawapan Betul!</h3>
+              <p id="feedback-desc" class="feedback-desc">Penerangan ringkas di sini.</p>
+            </div>
+          </div>
+          <button id="btn-next-question" class="btn btn-primary btn-next">
+            SOALAN SETERUSNYA ➔
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================================
+         SKRIN 3: HALAMAN KEPUTUSAN
+         ======================================================== -->
+    <main id="screen-result" class="screen">
+      <div class="card result-card">
+        <div class="result-celebration">
+          <div id="result-stars" class="stars-display">
+            <span class="star-item">⭐</span>
+            <span class="star-item">⭐</span>
+            <span class="star-item">⭐</span>
+          </div>
+          <h2 class="result-title">Misi Selesai!</h2>
+          
+          <div class="result-player-badge">
+            <span class="result-player-avatar">🧒</span>
+            <span id="result-student-name">Murid</span>
+            <span class="result-player-dot">•</span>
+            <span id="result-student-class" class="player-class-chip">2 Elite</span>
+          </div>
+
+          <p id="result-comment" class="result-comment">
+            Hebat! Kamu juara Bahasa Arab!
+          </p>
+        </div>
+
+        <!-- Kad Ringkasan Markah -->
+        <div class="result-stats-grid">
+          <div class="stat-box primary">
+            <span class="stat-label">Jumlah Markah</span>
+            <div class="stat-value">
+              <span id="final-score-val">100</span>
+              <span class="stat-sub">/ 100</span>
+            </div>
+          </div>
+          
+          <div class="stat-box success">
+            <span class="stat-label">Jawapan Betul</span>
+            <div class="stat-value">
+              <span id="final-correct-val">20</span>
+              <span class="stat-sub">/ 20</span>
+            </div>
+          </div>
+
+          <div class="stat-box info">
+            <span class="stat-label">Peratusan</span>
+            <div class="stat-value">
+              <span id="final-percent-val">100%</span>
+            </div>
+          </div>
+
+          <div class="stat-box warning">
+            <span class="stat-label">Masa Menjawab</span>
+            <div class="stat-value small-text">
+              <span id="final-time-val">1 min 30 saat</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kad Status Integrasi Google Sheets -->
+        <div id="sync-status-card" class="sync-status-card status-pending">
+          <div class="sync-icon" id="sync-icon">⏳</div>
+          <div class="sync-text-wrap">
+            <div class="sync-title" id="sync-title">Menghantar keputusan ke Leaderboard...</div>
+            <div class="sync-desc" id="sync-desc">Sila tunggu sebentar sementara rekod disimpan.</div>
+          </div>
+          <button id="btn-retry-sync" class="btn btn-sm btn-retry" style="display: none;">
+            🔄 Cuba Semula
+          </button>
+        </div>
+
+        <!-- Butang Navigasi Keputusan -->
+        <div class="result-actions">
+          <button id="btn-review-answers" class="btn btn-secondary">
+            📝 SEMAK JAWAPAN
+          </button>
+          <button id="btn-view-leaderboard-result" class="btn btn-accent">
+            🏆 LIHAT LEADERBOARD
+          </button>
+          <button id="btn-play-again" class="btn btn-primary">
+            🔄 MAIN LAGI
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================================
+         SKRIN 4: HALAMAN SEMAKAN JAWAPAN (20 SOALAN)
+         ======================================================== -->
+    <main id="screen-review" class="screen">
+      <div class="card review-card">
+        <div class="review-header">
+          <div class="review-header-text">
+            <h2>Semakan Jawapan</h2>
+            <p>Teliti jawapan bagi kesemua 20 soalan yang telah kamu jawab.</p>
+          </div>
+          <button id="btn-back-to-results" class="btn btn-secondary btn-sm">
+            ⬅️ Kembali ke Keputusan
+          </button>
+        </div>
+
+        <!-- Senarai 20 Soalan Semakan -->
+        <div id="review-list-container" class="review-list">
+          <!-- Dimuatkan secara dinamik oleh script.js -->
+        </div>
+
+        <div class="review-footer">
+          <button id="btn-back-to-results-bottom" class="btn btn-primary">
+            ⬅️ Kembali ke Halaman Keputusan
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================================
+         MODAL / SKRIN 5: PAPAN JUARA (LEADERBOARD GOOGLE SHEETS)
+         ======================================================== -->
+    <div id="modal-leaderboard" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="leaderboard-modal-title">
+      <div class="modal-card leaderboard-modal">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="modal-trophy">🏆</span>
+            <div>
+              <h2 id="leaderboard-modal-title" class="modal-title">Papan Juara Misi Bahasa Arab</h2>
+              <span class="modal-subtitle">Keputusan Rasmi daripada Google Sheets</span>
+            </div>
+          </div>
+          <button id="btn-close-leaderboard" class="btn-close" aria-label="Tutup Papan Juara">✕</button>
+        </div>
+
+        <div class="leaderboard-controls">
+          <button id="btn-refresh-leaderboard" class="btn btn-sm btn-secondary">
+            🔄 Muat Semula Data
+          </button>
+          <span id="leaderboard-last-updated" class="last-updated-text"></span>
+        </div>
+
+        <div class="modal-body leaderboard-body">
+          <!-- Status / Ralat / Makluman Konfigurasi -->
+          <div id="leaderboard-status-box" class="leaderboard-status" style="display: none;"></div>
+
+          <!-- BAHAGIAN A: TOP 10 MURID -->
+          <section class="leaderboard-section">
+            <div class="section-title-wrap">
+              <h3 class="section-heading">🌟 TOP 10 MURID TERBAIK</h3>
+              <span class="section-subheading">Markah tertinggi & masa paling pantas</span>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="leaderboard-table" id="top-10-table">
+                <thead>
+                  <tr>
+                    <th class="col-rank">Kedudukan</th>
+                    <th class="col-name">Nama Murid</th>
+                    <th class="col-class">Kelas</th>
+                    <th class="col-score">Markah</th>
+                    <th class="col-time">Masa</th>
+                  </tr>
+                </thead>
+                <tbody id="top-10-tbody">
+                  <!-- Data Top 10 dimuatkan di sini -->
+                </tbody>
+              </table>
+            </div>
+            <div id="top-10-empty" class="empty-state" style="display: none;">
+              <span class="empty-icon">🎒</span>
+              <p>Belum ada rekod. Jadilah murid pertama mencatat markah di Papan Juara!</p>
+            </div>
+          </section>
+
+          <!-- BAHAGIAN B: 20 PERCUBAAN TERKINI -->
+          <section class="leaderboard-section recent-activity-section">
+            <div class="section-title-wrap">
+              <h3 class="section-heading">⏱️ Rakan Yang Baru Selesai Bermain</h3>
+              <span class="section-subheading">20 percubaan terkini yang telah disiapkan</span>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="leaderboard-table table-compact" id="recent-20-table">
+                <thead>
+                  <tr>
+                    <th class="col-recent-name">Nama Murid</th>
+                    <th class="col-recent-class">Kelas</th>
+                    <th class="col-recent-score">Markah</th>
+                    <th class="col-recent-status">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-20-tbody">
+                  <!-- Data 20 Terkini dimuatkan di sini -->
+                </tbody>
+              </table>
+            </div>
+            <div id="recent-20-empty" class="empty-state" style="display: none;">
+              <p>Belum ada aktiviti terkini.</p>
+            </div>
+          </section>
+        </div>
+
+        <div class="modal-footer">
+          <button id="btn-close-leaderboard-footer" class="btn btn-primary">
+            Tutup Papan Juara
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         MODAL PENCAPAIAN INTERMEDIATE (SETIAP 5 SOALAN)
+         ======================================================== -->
+    <div id="modal-achievement" class="modal-overlay achievement-modal-overlay" style="display: none;">
+      <div class="achievement-card">
+        <div class="achievement-icon" id="achievement-icon">🎉</div>
+        <h3 id="achievement-title" class="achievement-title">Hebat! 5 Soalan Berjaya!</h3>
+        <p id="achievement-desc" class="achievement-desc">Kamu sedang menguasai Bahasa Arab dengan cemerlang!</p>
+        <button id="btn-continue-achievement" class="btn btn-primary btn-sm">
+          Teruskan Perjalanan ➔
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         FOOTER RINGKAS
+         ======================================================== -->
+    <footer class="app-footer">
+      <p>MISI BAHASA ARAB &copy; Dunia Alat Sekolah • Khusus untuk Murid Tahun 2 SK Kampung Lindungan</p>
+    </footer>
+  </div>
+
+  <!-- Memuatkan Skrip Mengikut Susunan -->
+  <script src="config.js"></script>
+  <script src="assets.js"></script>
+  <script src="questions.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
